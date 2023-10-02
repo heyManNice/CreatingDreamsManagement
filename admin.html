@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园统一管理系统</title>
+    <link rel="stylesheet" href="./css/bule.css">
+    <link rel="stylesheet" href="./css/admin.css">
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
+    <script src="./js/request.js"></script>
+    <script src="./js/adjustFontSize.js"></script>
+    <script src="./js/sleep.js"></script>
+    <script src="./js/vue.js"></script>
+    <script src="./js/unitBase.js"></script>
+</head>
+<body>
+    <myconfirm></myconfirm>
+    <photoviewer></photoviewer>
+    <div id="app">
+        <SettingPage></SettingPage>
+        <div class="head">
+            <myhead></myhead>
+        </div>
+        <div class="main">
+            <div class="unifiedControl">
+                <unifiedControl></unifiedControl>
+            </div>
+            <div class="singleControl">
+                <singleControl v-show="controlPage==1"></singleControl>
+                <examine v-show="controlPage==2"></examine>
+                <imageManage v-show="controlPage==3"></imageManage>
+                <logs v-show="controlPage==4"></logs>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    units=['myhead','unifiedControl','singleControl','examine','imageManage','logs','myconfirm','SettingPage','photoviewer'];
+</script>
+</html>

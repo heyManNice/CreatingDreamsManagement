@@ -1,0 +1,336 @@
+<page>
+    <div v-for="(grade_item,grade_key) in computerList" class="grade">
+        <div class="grade_info">{{grade_key}}年级</div>
+        <div class="grade_detailed">
+            <div v-for="(item,key) in grade_item" class="machine">
+                <div class="machine_row">
+                    <div class="machine_img">
+                        <div :id="'load'+item.id" class="img_loading">
+                            <div class="loading"></div>
+                        </div>
+                        <img :id="'myimg'+item.id" @click="item.state==1?unit.singleControl.getSc(item.id):unit.myconfirm.show('未开机','该多媒体未开机，无法获取屏幕截图',true)" :title="item.state==1?'更新截图':'已关机'" :src="item.state==1?(item.screen?item.screen:item.wallpaper):'./img/shutdown.png'" alt="预览图片">
+                    </div>
+                    <div class="machine_info">
+                        <span>{{item.class.class}}班 id:{{item.id}}</span>
+                        <span v-text="item.state==1?'运行中':'已关机'"></span>
+                    </div>
+                </div>
+                <div class="machine_row">
+                    <button @click="unit.singleControl.wallpaper(item)">壁纸</button>
+                    <button @click="unit.singleControl.blacklist(item)">黑名单</button>
+                    <button @click="unit.singleControl.reinstall(item)">重装系统</button>
+                </div>
+                <div class="machine_row">
+                    <button v-show="item.state==1" @click="unit.singleControl.shutdown(item)">关机</button>
+                    <button @click="unit.singleControl.setclass(item)">设置班级</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</page>
+<script>
+    vueData_load({
+        name:"singleControl",
+        data:{
+            SettingPage:'',
+        }
+    },function(){
+        LoadAllComputer();
+    })
+    async function LoadAllComputer(){
+        let result = await request.sync_post("getAllComputer",{})
+        vueData.computerList={}
+        let i = 0,online=0;
+        for(key in result['data']){
+            result['data'][key]["class"]=JSON.parse(result['data'][key]["class"]);
+            i++;
+            if(!vueData.computerList[result['data'][key]["class"]["grade"]]){
+                vueData.computerList[result['data'][key]["class"]["grade"]]={}
+            }
+            if(result['data'][key]['state']==1){
+                online++;
+            }
+            vueData.computerList[result['data'][key]["class"]["grade"]][result['data'][key]["id"]]=result['data'][key]
+        }
+        vueData.computer_info={}
+        vueData.computer_info.number_grade=Object.keys(vueData.computerList).length;
+        vueData.computer_info.number_class=i;
+        vueData.computer_info.number_online=online;
+        vueData.$forceUpdate()
+        //console.log(vueData.computerList);
+    }
+    singleControl={
+        setclass:async function(item){
+            vueData.SettingPage='setclass';
+            SettingPage.Wallpaper_change=0;
+            SettingPage.em="id为"+item.id;
+            SettingPage.id=item.id;
+            SettingPage.type='s';
+            vueData.$forceUpdate();
+        },
+        blacklist:async function(item){
+            vueData.SettingPage='blacklist';
+            SettingPage.Wallpaper_change=0;
+            SettingPage.em=item.class.grade+'年级'+item.class.class+'班';
+            SettingPage.id=item.id;
+            SettingPage.type='s';
+            vueData.$forceUpdate();
+        },
+        wallpaper:async function(item){
+            if(!vueData.wallpaperList){
+                let result = await request.sync_post("getAllWallpaper",{});
+                vueData.wallpaperList=result.data
+            }
+            vueData.SettingPage='wallpaper';
+            SettingPage.Wallpaper_change=0;
+            SettingPage.em=item.class.grade+'年级'+item.class.class+'班';
+            SettingPage.Wallpaper_src=item.wallpaper;
+            SettingPage.id=item.id;
+            SettingPage.type='s';
+            vueData.$forceUpdate();
+        },
+        reinstall:async function(item){
+            if(!vueData.images.length){
+                await imageManage.getAllImage();
+            }
+            document.querySelector(".chooseSystem_info").innerHTML="介绍："+vueData.images[0]['msg'];
+            vueData.SettingPage='reinstall';
+            SettingPage.em=item.class.grade+'年级'+item.class.class+'班';
+            SettingPage.id=item.id;
+            SettingPage.type='s';
+            vueData.$forceUpdate();
+        },
+        shutdown:async function(item){
+            let result = await myconfirm.show("关机","确认要关闭 <b>"+item.class.grade+'年级'+item.class.class+'班</b> 的多媒体吗？');
+            if(!result){
+                console.log('取消');
+                return
+            }
+            singleControl.socket_send({type:"toPC",callback:'shutdown',id:item.id,em:'s'})
+        },
+        socket_send:function(json){
+            socket.send(JSON.stringify(json));
+        },
+        getSc:function(id){
+            if(id){
+                document.querySelector('#load'+id).style.display = 'block';
+                document.querySelector('#myimg'+id).onload=function(){
+                    document.querySelector('#load'+id).style.display = 'none';
+                }
+                singleControl.socket_send({type:"getSc",id:id});
+            }else{
+                //全部
+                singleControl.socket_send({type:"getSc"});
+            }
+        }
+    }
+
+    //webSocket的内容
+    const socket = new WebSocket('ws://61.171.77.166:3500');
+    socket.addEventListener('open', function (event) {
+        socket.send(JSON.stringify({key:request.cookieToJson()["sessionId"]}));
+        singleControl.getSc();
+    });
+
+    socket.addEventListener('message', function (event) {
+        /* console.log('Message from server ', event.data); */
+        let data=JSON.parse(event.data);
+        if(data.callback){
+            socket_callback[data.callback](data);
+        }
+    });
+    socket_callback={
+        alt:function(data){
+            alert(data.msg);
+        },
+        setWallpaperOK:function(data){
+            for(i in vueData.computerList){
+                for(id in vueData.computerList[i]){
+                    if(id == data.id || data.type == 'a'){
+                        vueData.computerList[i][id]['wallpaper']=data.fileUrl;
+                    }
+                }
+            }
+            if(data.new){
+                vueData.wallpaperList.push(data.fileUrl);
+            }
+            vueData.$forceUpdate()
+        },
+        setwallpaperOk:function(data){
+            setTimeout(function(){
+                singleControl.getSc(data.id);
+            },600);
+        },
+        computerOnOff:async function(data){
+            for(let i in vueData.computerList){
+                for(j in vueData.computerList[i]){
+                    if(data.id == j){
+                        vueData.computerList[i][j]['state']=data.onOff;
+                        vueData.computer_info.number_online+=(data.onOff?1:-1);
+                    }
+                }
+            }
+            vueData.$forceUpdate()
+        },
+        refalsh_examine:async function(){
+            let result = await request.sync_post("getNewExamine",{});
+            vueData.newMsg.examine=0;
+            for(i in result.data){
+                vueData.newMsg.examine++;
+            }
+            vueData.examine_list=result.data;
+            document.querySelector(".show_more").style.display='block'
+            vueData.$forceUpdate()
+        },
+        refalsh_computer:function(){
+            LoadAllComputer();
+        },
+        getScOk:function(data){
+            for(let i in vueData.computerList){
+                for(let j in vueData.computerList[i]){
+                    if(j==data.id){
+                        vueData.computerList[i][j]['screen']=data.base64_img;
+                    }
+                }
+            }
+            vueData.$forceUpdate()
+        }
+    }
+</script>
+<style>
+    .img_loading{
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+        display: none;
+        animation: op0to1 300ms 1;
+    }
+    .loading {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 1rem;
+    height: 1rem;
+    border: 0.2rem solid var(--primary-color);
+    border-top-color: rgba(255, 255, 255, 0.4);
+    border-right-color: rgba(255, 255, 255, 0.4);
+    border-bottom-color: rgba(255, 255, 255, 0.4);
+    border-radius: 100%;
+
+    animation: circle infinite 0.75s linear;
+    }
+
+    @keyframes circle {
+        0% {
+            transform: rotate(0);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    @keyframes op0to1 {
+        from{
+            opacity: 0;
+        }
+        to{
+            opacity: 1;
+        }
+    }
+    .singleControl{
+        padding: 1rem;
+    }
+    singleControl{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        animation: singleControl_appear 300ms 1;
+    }
+    @keyframes singleControl_appear{
+        from{
+            transform: scale(0.9) translate(-5rem,-5rem);
+            opacity: 0;
+        }
+        to{
+            transform: scale(1) translate(0rem,0rem);
+            opacity: 1;
+        }
+    }
+    singleControl .grade{
+        width: 100%;
+        background-color: var(--text-icons);
+        height: fit-content;
+        border-radius: 0.5rem;
+        box-shadow: 0px 0px 0.4rem rgb(0, 0, 0,0.3);
+        margin-bottom: 1rem;
+    }
+    singleControl .grade .grade_info{
+        color: white;
+        width: 100%;
+        height: 3rem;
+        line-height: 3rem;
+        padding-left: 2rem;
+        background-color: var(--primary-color);
+    }
+    singleControl .grade .machine{
+        overflow: hidden;
+        display: inline-flex;
+        width: 12rem;
+        height: 8rem;
+        margin: 1rem 1.5rem;    
+        border-radius: 0.3rem;
+        box-shadow: 0px 0px 0.4rem rgb(0, 0, 0,0.3);
+        padding: 0.4rem;
+        flex-direction: column;
+    }
+    singleControl .grade .machine .machine_row{
+        display: flex;
+        flex: 1;
+        
+    }
+    singleControl .grade .machine .machine_row div{
+        flex: 1;
+    }
+    singleControl .grade .machine .machine_row button{
+        flex: 1;
+        font-size: 0.75rem;
+        /* outline: 0.1rem solid rgb(0, 0, 0,0.1); */
+        box-shadow: inset 0px 0px 0.1rem var(--dark-primary-color);
+        margin: 0.1rem;
+        border: 0;
+        border-radius: 0.2rem;
+        background-color: var(--text-icons);
+        cursor: pointer;
+        transition: all 300ms;
+    }
+    singleControl .grade .machine .machine_row button:hover{
+        background-color: var(--light-primary-color);
+    }
+    singleControl .grade .machine .machine_row .machine_info{
+        text-align: center;
+        font-size: 0.75rem;
+    }
+    singleControl .grade .machine .machine_row .machine_info span{
+        display: block;
+        margin: 0.2rem;
+    }
+    singleControl .grade .machine .machine_row .machine_img{
+        position: relative;
+        width: 6rem;
+        height: 3.3rem;
+        overflow: hidden;
+        border-radius: 0.3rem;
+    }
+    singleControl .grade .machine .machine_row .machine_img img{
+        cursor: pointer;
+        width: 6rem;
+        height: 3.3rem;
+        border-radius: 0.3rem;
+        box-shadow: 0px 0px 0.2rem rgb(0, 0, 0,0.3);
+    }
+</style>

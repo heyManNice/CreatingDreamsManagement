@@ -1,0 +1,140 @@
+<page>
+    <div class="bar">多媒体信息</div>
+    <div class="unifiedControl_info">
+        <p v-text="computer_info?computer_info.number_grade+'个年级 '+computer_info.number_class+'个班级':'加载中'">加载中</p>
+        <p>在线：{{computer_info?computer_info.number_online:'加载中'}}台</p>
+        <p>警告信息：0条</p>
+        <p>审核信息：{{newMsg?newMsg.examine:0}}条</p>
+    </div>
+    <div class="bar">多媒体统一设置</div>
+    <div class="unifiedControl_btn">
+        <button @click="unit.unifiedControl.wallpaper()">设置壁纸</button>
+        <button @click="unit.unifiedControl.blacklist()">软件黑名单</button>
+        <button @click="unit.unifiedControl.reinstall(computerList)">重装系统</button>
+        <button @click="unit.unifiedControl.shutdown(computerList)">关机</button>
+        <button onclick="Ao()">安装软件</button>
+        <button @click="unit.unifiedControl.setNotice(computerList)">设置公告</button>
+    </div>
+</page>
+<script>
+    vueData_load({
+        name:"unifiedControl",
+        data:{
+            test:'ok',
+
+        }
+    },function(){
+        //console.log("yes")
+    })
+    unifiedControl={
+        mynotice:{},
+        getNotice:async function(){
+            /* if(vueData.images.length){
+                return
+            } */
+            let result = await request.sync_post("getNewNotice",{})
+            unifiedControl.mynotice=result.data;
+            if(unifiedControl.mynotice.onOff==0){
+                document.querySelectorAll("input[type=radio][name=setNotice_onOff]")[1].checked=true;
+            }
+            console.log(unifiedControl.mynotice);
+            vueData.$forceUpdate();
+        },
+        blacklist:async function(item){
+            vueData.SettingPage='blacklist';
+            SettingPage.Wallpaper_change=0;
+            SettingPage.em="全部班级";
+            SettingPage.id=vueData.schoolid;
+            SettingPage.type='a';
+            vueData.$forceUpdate();
+        },
+        setNotice:async function(item){
+            //需要判断是否已有数据
+            await unifiedControl.getNotice();
+            vueData.SettingPage='setNotice';
+            SettingPage.Wallpaper_change=0;
+            SettingPage.em="全部班级";
+            SettingPage.id=vueData.schoolid;
+            SettingPage.type='a';
+            vueData.$forceUpdate();
+        },
+        reinstall:async function(item){
+            if(!vueData.images.length){
+                await imageManage.getAllImage();
+            }
+            document.querySelector(".chooseSystem_info").innerHTML="介绍："+vueData.images[0]['msg'];
+            vueData.SettingPage='reinstall';
+            SettingPage.em="全部班级";
+            SettingPage.id=vueData.schoolid;
+            SettingPage.type='a';
+            vueData.$forceUpdate();
+        },
+        shutdown:async function(item){
+            let result = await myconfirm.show("关机","确认要<b>全部班级</b>的多媒体吗？");
+            if(!result){
+                console.log('取消');
+                return
+            }
+            singleControl.socket_send({type:"toPC",callback:['shutdown'],id:vueData.schoolid,em:'a'})
+        },
+        wallpaper:async function(){
+            if(!vueData.wallpaperList){
+                let result = await request.sync_post("getAllWallpaper",{});
+                vueData.wallpaperList=result.data
+            }
+            vueData.SettingPage='wallpaper';
+            SettingPage.Wallpaper_change=1;
+            SettingPage.em="全部班级";
+            SettingPage.Wallpaper_src=vueData.wallpaperList[0];
+            SettingPage.id=vueData.schoolid;
+            SettingPage.type='a';
+            vueData.$forceUpdate();
+        }
+    }
+</script>
+<style>
+unifiedControl{
+    display: flex;
+    height: 100%;
+    width: 100%;
+    color: var(--primary-text);
+    flex-direction: column;
+}
+.unifiedControl_info,.unifiedControl_btn{
+    padding: 1rem 2rem;
+}
+.unifiedControl_info p{
+    margin: 0.2rem;
+}
+unifiedControl .bar:nth-child(1){
+    margin-top: 1rem;
+}
+unifiedControl .bar{
+    border-radius: 0.3rem;
+    margin: 0 1rem;
+    height: 3rem;
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    line-height: 3rem;
+    box-shadow: 0px 0px 0.2rem rgb(0, 0, 0,0.3);
+}
+.unifiedControl{
+    box-shadow: 0px 0.2rem 0.4rem rgb(0, 0, 0,0.3);
+}
+.unifiedControl_btn button{
+    height: 2rem;
+    width: 7rem;
+    font-size: 0.75rem;
+    margin: 0.3rem 0.4rem;
+    border: 0.1rem solid var(--primary-color);
+    border-radius: 0.2rem;
+    background-color: var(--text-icons);
+    cursor: pointer;
+    transition: all 300ms;
+    
+}
+.unifiedControl_btn button:hover{
+    background-color: var(--light-primary-color);
+}
+</style>

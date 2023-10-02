@@ -1,0 +1,223 @@
+body{
+    background-color: var(--divider-color);
+}
+#backgroundImg{
+    position: fixed;
+    z-index: -10;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+}
+.bk{
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    margin: auto;
+    width: 100vw;
+    height: 80vh;
+    background-color: var(--primary-color);
+    /* box-shadow: 0px 0px 0.5vh var(--primary-text); */
+}
+main{
+    z-index: 20;
+    box-shadow: 0px 0px 1vh var(--primary-text);
+    border-radius: 2vh;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 3vh;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 10vw;
+    margin: auto;
+    background-color: var(--text-icons);
+    width: 25vw;
+    height: 36vh;
+    text-align: center;
+    transition: all 500ms;
+}
+.mainR{
+    height: 55vh;
+}
+input{
+    border: none;
+    border: 1px solid var(--divider-color);
+    padding-left: 2vh;
+    outline: none;
+    transition: all 300ms;
+}
+input:hover{
+    border-bottom: 1px solid var(--primary-color);
+}
+input:focus{
+    border: 1px solid var(--primary-color);
+    box-shadow: 0px 0px 2px var(--primary-color);
+}
+
+main .login input,main .login .submit,main .register .submit{
+    font-size: 0.8rem;
+    width: 19vw;
+    height: 4vh;
+    margin-top: 3vh;
+    box-sizing: border-box;
+}
+main .register input{
+    font-size: 0.8rem;
+    width: 19vw;
+    height: 4vh;
+    margin-top: 2vh;
+    box-sizing: border-box;
+}
+main .register .phoneVeriCode,main .register .phoneVeri{
+    font-size: 0.8rem;
+    width: 9vw;
+    height: 4vh;
+    margin-top: 2vh;
+    box-sizing: border-box;
+}
+main .register .phoneVeriCode{
+    margin-right: 1vw;
+    box-sizing: border-box;
+}
+main .register .phoneVeri{
+    outline: none;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--text-icons);
+    cursor: pointer;
+}
+.submit{
+    outline: none;
+    border: none;
+    background-color: var(--primary-color);
+    color: var(--text-icons);
+    cursor: pointer;
+    margin-top: 4vh;
+    transition: all 300ms;
+}
+.submit:hover{
+    background-color: var(--accent-color);
+}
+main .topBtn{
+    text-align: left;
+    margin-left: 1.55vw;
+}
+main .topBtn button{
+    background-color: var(--text-icons);
+    margin-right: 2vh;
+    font-size: 1.2rem;
+    height: 5vh;
+    width: 3vw;
+    border: none;
+    outline: none;
+    white-space: nowrap;
+}
+
+.topBtnAct{
+    border-bottom: 2px solid var(--primary-color) !important;
+}
+.forgetpw{
+    display: block;
+    font-size: 0.5rem;
+    color: var(--secondary-text);
+    text-align: left;
+    margin-left: 1.55vw;
+    margin-top: 1vh;
+    cursor: pointer;
+}
+header {
+    height: 10vh;
+}
+header h1{
+    line-height: 10vh;
+    margin-left: 3vh;
+    color: var(--primary-text);
+    transition: all 300ms;
+}
+.J1{
+    top:70vh;
+    left: -20vw;
+    position: absolute;
+    transform: rotate(45deg);
+    height: 20vh;
+    width: 100vw;
+    background-color: #A6D9EC;
+    z-index: 13;
+}
+.J2{
+    top:10vh;
+    left: -38vw;
+    position: absolute;
+    transform: rotate(45deg);
+    height: 20vh;
+    width: 100vw;
+    background-color: #9194EC;
+    z-index: 11;
+}
+.J3{
+    left: 15vw;
+    position: absolute;
+    height: 100vh;
+    width: 50vw;
+    background-color: var(--primary-color);
+    z-index: 12;
+}
+.register{
+    animation: op0to1sc0_8to1 500ms 1;
+}
+.login{
+    animation: op0to1sc0_8to1L 500ms 1;
+}
+
+@keyframes op0to1sc0_8to1{
+    from{
+        transform: translateY(-100px) scaleY(0.6);
+        opacity: 0;
+    }
+    to{
+        transform: translateY(0px) scaleY(1);
+        opacity: 1;
+    }
+}
+@keyframes op0to1sc0_8to1L{
+    from{
+        transform: translateY(100px) scaleY(1.8);
+        opacity: 0;
+    }
+    to{
+        transform: translateY(0px) scaleY(1);
+        opacity: 1;
+    }
+}
+@keyframes op0to1{
+    from{
+        opacity: 0;
+    }
+    to{
+        opacity: 1;
+    }
+}
+.schoolSearchList{
+    background-color: #ffffff;
+    height: fit-content;
+    width: 19vw;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    text-align: left;
+    border-radius: 0.2rem;
+    box-shadow: 0 0.1rem 0.3rem rgba(0, 0, 0, 0.4);
+    animation: op0to1 300ms 1;
+    
+}
+.schoolSearchList .school{
+    font-size: 0.85rem;
+    margin: 0.3rem 1.1rem;
+    cursor: pointer;
+}
+.schoolNameMatch{
+    color: red;
+}

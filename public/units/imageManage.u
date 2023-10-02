@@ -1,0 +1,93 @@
+<page>
+    <div v-show="images?!images.length:1" class="card">
+        <h1>┗|｀O′|┛ 嗷~~</h1>
+        <p>还没有镜像噢...</p>
+    </div>
+    <div v-for="(item,key) in images" class="image_card">
+        <div class="image_title mytitle">
+            <span class="fa fa-windows"></span> {{item.name}}
+            <span class="image_time">大小: {{item.size}}GB &nbsp;&nbsp; 上传时间: {{item.time}}</span>
+        </div>
+        <div class="image_msg">
+            {{item.msg}}
+        </div>
+        <div class="btn">
+            <button onclick="Ao()" class="mybtn_S">删除</button>
+            <button onclick="Ao()" class="mybtn_S">安装</button>
+            <button onclick="Ao()" class="mybtn_S">下载</button>
+        </div>
+    </div>
+    <div class="upload_image">
+        <p onclick="Ao()">上传镜像</p>
+    </div>
+</page>
+<script>
+    vueData_load({
+        data:{
+            images:[]
+        }
+    },function(){
+        vueData.imageLoad=function (){
+            imageManage.getAllImage();
+        }
+    })
+    imageManage={
+        getAllImage:async function(){
+            if(vueData.images.length){
+                return
+            }
+            let result = await request.sync_post("getAllImage",{})
+            vueData.images = result.data;
+            console.log(vueData.images);
+            vueData.$forceUpdate();
+        }
+    }
+</script>
+<style>
+    imageManage{
+        display: block;
+        width: 100%;
+        height: 100%;
+        animation: singleControl_appear 300ms 1;
+    }
+    .image_time{
+        position: absolute;
+        font-size: 0.75rem;
+        right: 1.5rem;
+        color: var(--secondary-text);
+    }
+    imageManage .image_card{
+        position: relative;
+        margin-bottom: 1rem;
+        width: 100%;
+        height: fit-content;
+        background-color: rgb(255, 255, 255);
+        padding: 1rem;
+        border-radius: 1rem;
+        transition: all 300ms;
+        box-shadow: 0px 0px 0.4rem rgb(0, 0, 0,0.3);
+    }
+    imageManage .image_card .btn{
+        text-align: right;
+    }
+    imageManage .upload_image p{
+        text-align: center;
+        margin-bottom: 1rem;
+        text-decoration: underline;
+        font-style:italic;
+        cursor: pointer;
+        color: var(--secondary-text);
+    }
+    imageManage .card{
+        width: 100%;
+        height: fit-content;
+        background-color: rgb(255, 255, 255);
+        padding: 2rem;
+        margin-bottom: 1rem;
+        border-radius: 1rem;
+        box-shadow: 0px 0px 0.4rem rgb(0, 0, 0,0.3);
+    }
+    imageManage .card p{
+        margin-top: 1rem;
+    }
+</style>

@@ -1,0 +1,418 @@
+<page>
+    <div class="SettingPage SetWallpaper" v-show="SettingPage=='wallpaper'">
+        <div class="Setting_window">
+            <div class="mian">
+                <div class="mytitle">
+                    <span class="fa fa-cog"></span>
+                    壁纸
+                </div>
+                <div class="mytext">
+                    为 <b>{{unit.SettingPage?unit.SettingPage.em:0}}</b> 多媒体设置壁纸
+                </div>
+                <div class="mytext history_wallpaper">
+                    <span>历史壁纸：</span>
+                    <img onclick="SettingPage.historyImg(this)" v-for="item in wallpaperList" :src="item" alt="">
+                </div>
+                <div class="setbtn">
+                    <div class="SetWallpaper_framework">
+                        <span  v-show="unit.SettingPage?unit.SettingPage.Wallpaper_change:0" class="wallpaper_no_save">未保存</span>
+                        <img src="./img/wallpaper_framework.png" alt="win10效果">
+                    </div>
+                    <img class="SetWallpaper_img" :src="unit.SettingPage?unit.SettingPage.Wallpaper_src:''" alt="当前壁纸">
+                    <span class="style_set_upload mybtn_L">
+                        上传壁纸
+                        <input onchange="SettingPage.changeWallpaper(this)" class="set_upload" type="file" accept="image/png, image/jpeg">
+                    </span>
+                </div>
+            </div>
+            <div class="btn">
+                <button @click="unit.SettingPage.giveup()" class="mybtn_L SettingPage_cancel">放弃</button>
+                <button @click="unit.SettingPage.ok()" class="mybtn_L SettingPage_ok">保存</button>
+            </div>
+        </div>
+    </div>
+    <div class="SettingPage reinstall" v-show="SettingPage=='reinstall'">
+        <div class="Setting_window">
+            <div class="mian">
+                <div class="mytitle">
+                    <span class="fa fa-cog"></span>
+                    重装系统
+                </div>
+                <div class="mytext">
+                    为 <b>{{unit.SettingPage?unit.SettingPage.em:0}}</b> 重装系统
+                </div>
+                <div class="chooseSystem">
+                    选择系统:
+                    <select onchange="SettingPage.changeChoose(this.value)" class="mybtn_L select_system" name="chooseSystem" id="chooseSystem">
+                        <option v-for="item in images" :value="item.id">{{item.name}}</option>
+                    </select>
+                </div>
+                <div class="chooseSystem_info">
+                    
+                </div>
+                <div class="restall_type_class">
+                    <label for="restall_type_1" title="多媒体会立刻重启安装系统，不向用户提醒">
+                        <input type="radio" name="restall_type" id="restall_type_1" checked>
+                        立刻安装
+                    </label>
+                    <label for="restall_type_2" title="当系统下次启动时，会先安装系统">
+                        <input type="radio" name="restall_type" id="restall_type_2">
+                        下次启动安装
+                    </label>
+                    <label for="restall_type_3" title="由用户选择在任意时间和是否安装该系统">
+                        <input type="radio" name="restall_type" id="restall_type_3">
+                        由用户选择
+                    </label>
+                </div>
+            </div>
+            <div class="btn">
+                <button @click="unit.SettingPage.giveup()" class="mybtn_L SettingPage_cancel">取消</button>
+                <button @click="unit.SettingPage.ok()" class="mybtn_L SettingPage_ok">确定</button>
+            </div>
+        </div>
+    </div>
+    <div class="SettingPage blacklist" v-show="SettingPage=='blacklist'">
+        <div class="Setting_window">
+            <div class="mian">
+                <div class="mytitle">
+                    <span class="fa fa-cog"></span>
+                    软件黑名单
+                </div>
+                <div class="mytext">
+                    为 <b>{{unit.SettingPage?unit.SettingPage.em:0}}</b> 设置黑名单，用“、”符号隔开多个词汇。这些词汇作为关键词用于检测窗口标题
+                </div>
+                <div class=".mytext">
+                    <input class="blacklist_text mybtn_L" value="抖音、快手、4399" type="text" name="blacklist_text" id="blacklist_text">
+                </div>
+                
+            </div>
+            <div class="btn">
+                <button @click="unit.SettingPage.giveup()" class="mybtn_L SettingPage_cancel">取消</button>
+                <button @click="unit.SettingPage.ok()" class="mybtn_L SettingPage_ok">确定</button>
+            </div>
+        </div>
+    </div>
+    <div class="SettingPage setclass" v-show="SettingPage=='setclass'">
+        <div class="Setting_window">
+            <div class="mian">
+                <div class="mytitle">
+                    <span class="fa fa-cog"></span>
+                    设置班级
+                </div>
+                <div class="mytext">
+                    为 <b>{{unit.SettingPage?unit.SettingPage.em:0}}</b> 的多媒体设置班级，id可以在多媒体开始菜单，打开“设备id”查看
+                </div>
+                <div class=".mytext">
+                    设置为 
+                    <select class="setclass_select mybtn_L" name="setclass_grade" id="setclass_grade">
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                    </select>年级
+                    <select class="setclass_select mybtn_L" name="setclass_class" id="setclass_grade">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>班
+                </div>
+                
+            </div>
+            <div class="btn">
+                <button @click="unit.SettingPage.giveup()" class="mybtn_L SettingPage_cancel">取消</button>
+                <button @click="unit.SettingPage.ok()" class="mybtn_L SettingPage_ok">确定</button>
+            </div>
+        </div>
+    </div>
+    <div class="SettingPage setNotice" v-show="SettingPage=='setNotice'">
+        <div class="Setting_window">
+            <div class="mian">
+                <div class="mytitle">
+                    <span class="fa fa-cog"></span>
+                    设置公告
+                </div>
+                <div class="mytext">
+                    为 <b>{{unit.SettingPage?unit.SettingPage.em:0}}</b> 的多媒体设置开机弹出公告
+                </div>
+                <div class="setNotice_onOff mytext">
+                    公告开关：
+                    <label for="setNotice_onOff_1" title="多媒体会立刻重启安装系统，不向用户提醒">
+                        <input type="radio" name="setNotice_onOff" value="1" id="setNotice_onOff_1" checked>
+                        开启
+                    </label>
+                    <label for="setNotice_onOff_2" title="当系统下次启动时，会先安装系统">
+                        <input type="radio" name="setNotice_onOff" value="0" id="setNotice_onOff_2">
+                        关闭
+                    </label>
+                </div>
+                <div class="mytext">
+                    <input :value="unit.unifiedControl.mynotice.title" class="mybtn_L setNotice_title" type="text" name="setNotice_title" id="setNotice_title" placeholder="标题">
+                </div>
+                <div class="mytext">
+                    <textarea :value="unit.unifiedControl.mynotice.content" class="mybtn_L setNotice_title el-textarea__inner" name="setNotice_content" id="setNotice_content" cols="30" rows="10" placeholder="内容"></textarea>
+                </div>
+            </div>
+            <div class="btn">
+                <button @click="unit.SettingPage.giveup()" class="mybtn_L SettingPage_cancel">取消</button>
+                <button @click="unit.SettingPage.ok()" class="mybtn_L SettingPage_ok">确定</button>
+            </div>
+        </div>
+    </div>
+</page>
+<script>
+    SettingPage={
+        Wallpaper_src:"",
+        Wallpaper_change:0,
+        Wallpaper_id:0,
+        system_id:0,
+        type:'s',
+        changeChoose:function(id){
+            if(vueData.images){
+                for(i in vueData.images){
+                    if(vueData.images[i]['id']==id){
+                        document.querySelector(".chooseSystem_info").innerHTML="介绍："+vueData.images[i]['msg']
+                    }
+                }
+            }
+            console.log(id);
+        },
+        historyImg:function(em){
+            if(SettingPage.Wallpaper_src==em.getAttribute('src')){
+                return
+            }
+            SettingPage.Wallpaper_src=em.getAttribute('src');
+            SettingPage.Wallpaper_change=1;
+            vueData.$forceUpdate();
+        },
+        hide:function(){
+            vueData.SettingPage='';
+            vueData.$forceUpdate();
+        },
+        ok:async function(){
+            switch (vueData.SettingPage){
+                case 'wallpaper':
+                    if(SettingPage.Wallpaper_change){
+                        if(SettingPage.Wallpaper_src.slice(0,5)=='data:'){
+                            singleControl.socket_send({type:"setWallpaper",base64_img:SettingPage.Wallpaper_src,id:SettingPage.id,em:SettingPage.type})
+                        }else{
+                            singleControl.socket_send({type:"setWallpaper_url",fileUrl:SettingPage.Wallpaper_src,id:SettingPage.id,em:SettingPage.type})
+                        }
+                        document.querySelector('#load'+SettingPage.id).style.display = 'block';
+                    }
+                    break;
+                case 'reinstall':
+                    await myconfirm.show("抱歉",`当前的演示环境多媒体运行在服务器之上，与传统多媒体有区别，并且目前没有为该服务器定制镜像，无法使用此功能。若有幸能进入决赛，我将使用虚拟机作为多媒体演示。`);
+                    break
+                    /* let result = await myconfirm.show("重装系统",`确定要对 <b>${SettingPage.em}</b> 重装系统吗？这可能要花费几分钟时间`);
+                    if(!result){
+                        return
+                    }
+                    singleControl.socket_send({type:"toPC",system_id:document.querySelector("#chooseSystem").value,id:SettingPage.id,em:SettingPage.type,callback:"reinstall"})
+                    break */
+                case 'blacklist':
+                    //await Ao();
+                    break
+                case 'setclass':
+                    await Ao();
+                    break
+                case 'setNotice':
+                    singleControl.socket_send({type:"setNotice",title:document.querySelector("#setNotice_title").value,content:document.querySelector("#setNotice_content").value,onOff:document.querySelector("input[type=radio][name=setNotice_onOff]:checked").value})
+                    break
+                default:
+                    await Ao();
+                    break;
+            }
+            SettingPage.hide()
+        },
+        giveup:function(){
+            SettingPage.hide()
+        },
+        changeWallpaper:function(e){
+            SettingPage.Wallpaper_change=1;
+            if(e.files.length){
+            let file = e.files[0];
+            let reader = new FileReader();
+            reader.onload = function(){
+                SettingPage.Wallpaper_src=this.result;
+                vueData.$forceUpdate();
+            };
+            reader.readAsDataURL(file);
+            }
+        }
+    }
+</script>
+<style>
+    .el-textarea__inner{
+        font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
+        }
+    .setNotice_title{
+        margin-left: 0rem;
+        border: 0.05rem solid var(--primary-color);
+        outline: none;
+        resize: none;
+        color: black;
+        width: 100%;
+        cursor: text;
+    }
+    .setclass_select{
+        color: black;
+        color: var(--primary-text);
+        border: 0.05rem solid var(--primary-color);
+        outline: none;
+        margin-right: 0.5rem;
+        margin-left: 0.5rem;
+    }
+    .blacklist_text{
+        width: 100%;
+        width: 100%;
+        margin-left: 0rem;
+        color: var(--primary-text);
+        border: 0.05rem solid var(--primary-color);
+        outline: none;
+    }
+    .blacklist_text:focus{
+        box-shadow: 0px 0px 0.3rem var(--primary-color);
+    }
+    .chooseSystem_info{
+        font-size: 0.75rem;
+        color: var(--secondary-text);
+        margin-bottom: 0.5rem;
+    }
+    .restall_type_class{
+        display: flex;
+    }
+    .restall_type_class label{
+        flex: 1;
+        text-align: center;
+        font-size: 0.75rem;
+        cursor: pointer;
+    }
+    .chooseSystem{
+        margin-bottom: 0.5rem;
+    }
+    .select_system{
+        background-color: var(--primary-color);
+        outline: none;
+    }
+    .select_system:hover{
+        background-color:#0093e2;
+    }
+    .history_wallpaper{
+        display: flex;
+        align-items: center;
+    }
+    .history_wallpaper img{
+        cursor: pointer;
+        width: 2rem;
+        height: 1.2rem;
+        border-radius: 0.2rem;
+        margin-left: 0.3rem;
+    }
+    .wallpaper_no_save{
+        font-size: 0.5rem;
+        position: absolute;
+        padding: 0.5rem 0.5rem 0rem 0.5rem;
+        background-color: #ffe815;
+        color: black;
+        right: -0.8rem;
+        top: -0.1rem;
+        transform: rotate(45deg);
+    }
+    .style_set_upload{
+        position: absolute;
+        background-color: var(--primary-color);
+        top: 0;
+        bottom: 0;
+        height: fit-content;
+        margin: auto;
+        right: 3rem;
+    }
+    .style_set_upload:hover{
+        background-color:#0093e2;
+    }
+    .set_upload{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+    }
+    .setbtn{
+        position: relative;
+    }
+    .SetWallpaper_framework{
+        position: absolute;
+        width: 6rem;
+        height: 3.3rem;
+        border-radius: 0.3rem;
+        margin-left: 3rem;
+        overflow: hidden;
+    }
+    .SetWallpaper_framework img{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+    .SetWallpaper_img{
+        width: 6rem;
+        height: 3.3rem;
+        border-radius: 0.3rem;
+        box-shadow: 0px 0px 0.2rem rgb(0, 0, 0,0.3);
+        margin-left: 3rem;
+    }
+    .SettingPage_cancel{
+        background-color: var(--divider-color);
+    }
+    .SettingPage_cancel:hover{
+        background-color:#9e9e9e
+    }
+    .SettingPage_ok{
+        background-color: var(--dark-primary-color);
+    }
+    .SettingPage_ok:hover{
+        background-color:#0072af
+    }
+    .SettingPage .btn{
+        padding: 1rem;
+        background-color: #FBFBFC;
+        text-align: right;
+    }
+    .mian{
+        padding: 1rem;
+    }
+    .SettingPage{
+        position: fixed;
+        height: 100vh;
+        width: 100vw;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 200;
+        animation: confirm_appear_background 300ms 1;
+    }
+    .Setting_window{
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        height: fit-content;
+        width: 25rem;
+        background-color: white;
+        border-radius: 0.5rem;
+        box-sizing: border-box;
+        box-shadow: 0px 0px 1rem rgb(0, 0, 0,0.6);
+        overflow: hidden;
+        animation: confirm_appear 300ms 1;
+    }
+</style>

@@ -1,0 +1,150 @@
+<page>
+    <div v-show="examine_list?examine_list.length==0:0" class="card">
+        <h1>┗|｀O′|┛ 嗷~~</h1>
+        <p>暂时还没有新信息...</p>
+    </div>
+    <div class="examine_new_card" v-for="item in examine_list">
+        <h1><b>{{item.targetName}}</b>{{`(${item.phone}) ${item.content}`}}<span class="card_time">{{item.time}}</span></h1>
+        <div v-show="item.result==0" class="btn">
+            <button @click="unit.examine.no_pass(item)"><span class="fa fa-close"></span> 阻止</button>
+            <button @click="unit.examine.pass(item)"><span class="fa fa-check"></span> 通过</button>
+        </div>
+        <div v-show="item.result!=0" class="pass_info">
+            <b>{{item.result==1?'同意':'阻止'}}</b>：管理员{{item.sourceName}}操作
+        </div>
+    </div>
+    <p class="show_more" onclick="examine.showMoreMsg()">显示过往信息</p>
+</page>
+<script>
+    vueData_load({
+        data:{
+            examine_test:100,
+            examine_list:[]
+        }
+    },function(){
+        vueData.examineLoad=async function (){
+            if(vueData.examine_list.length){
+                return
+            }
+            let result = await request.sync_post("getNewExamine",{})
+            for(i in result.data){
+                vueData.newMsg.examine++;
+            }
+            vueData.examine_list=result.data
+            vueData.$forceUpdate()
+        }
+        //立即加载新审核
+        vueData.examineLoad();
+    })
+    examine={
+        showMoreMsg:async function(){
+            let result = await request.sync_post("showMoreMsg",{})
+            console.log(result);
+            vueData.examine_list=result.data
+            vueData.$forceUpdate()
+            document.querySelector(".show_more").style.display="none";
+        },
+        pass:async function(item){
+            let result = await myconfirm.show("通过注册","允许 <b>"+item.targetName+"("+item.phone+")"+" </b>注册吗？");
+            if(!result){
+                return
+            }
+            let send = await request.sync_post("sendResult",{id:item.id,result:1,targetid:item.targetid});
+            if(send.code){
+                myconfirm.show("错误码："+send.code,send.msg,true);
+                return
+            }
+            for(key in vueData.examine_list){
+                if(vueData.examine_list[key]['id']==item.id){
+                    vueData.examine_list.splice(key,1);
+                }
+            }
+            vueData.$forceUpdate();
+        },
+        no_pass:async function(item){
+            let result = await myconfirm.show("阻止注册","不允许 <b>"+item.targetName+"("+item.phone+")"+" </b>注册吗？");
+            if(!result){
+                return
+            }
+            let send = await request.sync_post("sendResult",{id:item.id,result:-1});
+            if(send.code){
+                myconfirm.show("错误码："+send.code,send.msg,true);
+                return
+            }
+            for(key in vueData.examine_list){
+                if(vueData.examine_list[key]['id']==item.id){
+                    vueData.examine_list.splice(key,1);
+                }
+            }
+            vueData.$forceUpdate();
+        }
+
+    }
+</script>
+<style>
+    .pass_info{
+        text-align: right;
+    }
+    .examine_new_card{
+        margin-bottom: 1rem;
+        width: 100%;
+        height: fit-content;
+        background-color: rgb(255, 255, 255);
+        padding: 1rem;
+        border-radius: 1rem;
+        transition: all 300ms;
+        box-shadow: 0px 0px 0.4rem rgb(0, 0, 0,0.3);
+        position: relative;
+    }
+    .examine_new_card:hover{
+        background-color:rgb(241, 241, 241);
+    }
+    .examine_new_card h1{
+        font-size: 1rem;
+        font-weight: normal;
+    }
+    .examine_new_card .btn{
+        text-align: right;
+    }
+    .examine_new_card .btn button{
+        font-size: 0.75rem;
+        box-shadow: inset 0px 0px 0.1rem var(--dark-primary-color);
+        margin: 0.1rem;
+        border: 0;
+        border-radius: 0.2rem;
+        background-color: var(--text-icons);
+        cursor: pointer;
+        transition: all 300ms;
+        padding: 0.2rem 0.5rem;
+        margin-left: 0.5rem;
+    }
+    .examine_new_card .btn button:hover{
+        background-color: var(--light-primary-color);
+    }
+    examine .show_more{
+        text-align: center;
+        margin-bottom: 1rem;
+        text-decoration: underline;
+        font-style:italic;
+        cursor: pointer;
+        color: var(--secondary-text);
+    }
+    examine{
+        display: block;
+        width: 100%;
+        height: 100%;
+        animation: singleControl_appear 300ms 1;
+    }
+    examine .card{
+        margin-bottom: 1rem;
+        width: 100%;
+        height: fit-content;
+        background-color: rgb(255, 255, 255);
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0px 0px 0.4rem rgb(0, 0, 0,0.3);
+    }
+    examine .card p{
+        margin-top: 1rem;
+    }
+</style>

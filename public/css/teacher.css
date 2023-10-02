@@ -1,0 +1,25 @@
+#app{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    font-size: 1rem;
+}
+.head{
+    /* background-color: blue; */
+    flex:0 0 auto;
+    min-height: 4rem;
+    height: 8vh;
+}
+.main{
+    flex:1 1 auto;
+    display: flex;
+}
+.unifiedControl{
+    background-color: rgb(203, 203, 203);
+    flex:0 0 auto;
+    width: 20vw;
+}
+.singleControl{
+    background-color: rgb(239, 239, 239);
+    flex:1 1 auto;
+}

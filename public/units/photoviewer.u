@@ -1,0 +1,67 @@
+<page>
+    <div class="photoviewer_main">
+        <span onclick="photoviewer.hide()" class="fa fa-remove photoviewer_close" title="关闭"></span>
+        <img id="photoviewer_img" class="photoviewer_img" src="" alt="图片">
+    </div>
+</page>
+<style>
+    .photoviewer_close{
+        background-color: rgb(255, 75, 75);
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        position: absolute;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1rem;
+        right: 0rem;
+        top:-1rem;
+        transition: all 300ms;
+        cursor: pointer;
+        z-index: 100;
+    }
+    .photoviewer_close:hover{
+        background-color: rgb(211, 63, 63);
+    }
+    photoviewer{
+        position: fixed;
+        height: 100vh;
+        width: 100vw;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 302;
+        animation: confirm_appear_background 300ms 1;
+        display: none;
+    }
+    .photoviewer_main{
+        display: block;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        height: 80vh;
+        width: 80vw;
+        animation: confirm_appear 300ms 1;
+    }
+    .photoviewer_img{
+        height: 100%;
+        display: block;
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+</style>
+<script>
+    photoviewer={
+        show:function(url){
+            document.querySelector("#photoviewer_img").src=url;
+            document.querySelector('photoviewer').style.display='block'
+        },
+        hide:function(){
+            document.querySelector('photoviewer').style.display='none'
+        }
+    }
+
+</script>

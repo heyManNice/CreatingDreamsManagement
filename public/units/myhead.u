@@ -1,0 +1,186 @@
+<page>
+    <h1 class="head_logo">管理系统</h1>
+    <div v-if="isAdmin" class="controlPage">
+        <button :class="{controlPageBtnAct:controlPage==1}" @click="controlPage=1;$forceUpdate()">多媒体</button>
+        <button id="examine" :class="{controlPageBtnAct:controlPage==2,redDrop:newMsg?newMsg.examine:0}" @click="controlPage=2;newMsg.examine=0;examineLoad();$forceUpdate()">审核</button>
+        <button :class="{controlPageBtnAct:controlPage==3}" @click="controlPage=3;imageLoad();$forceUpdate()">镜像管理</button>
+        <button :class="{controlPageBtnAct:controlPage==4,redDrop:newMsg.logs?newMsg.logs:0}" @click="controlPage=4;newMsg.logs=0;logsLoad();$forceUpdate()">日志</button>
+    </div>
+    <div class="head_userInfo">
+        <span>
+            <span class="fa fa-building"></span>{{schoolname}}
+        </span>
+        <span>
+            <span class="fa fa-user-circle"></span>{{isAdmin?'管理员：':'教师：'}}{{username}}
+        </span>
+    </div>
+    <div onclick="myhead.head_userControl_Press(event)" class="head_userControl">
+        <span class="fa fa-bars"></span>
+    </div>
+    <div onclick="myhead.menuClick(event)" class="head_userControl_menu">
+        <li onclick="myhead.loginOut()"><span class="fa fa-sign-out"></span> 退出登录</li>
+        <li onclick="Ao()"><span class="fa fa-edit"></span> 资料编辑</li>
+        <li onclick="Ao()"><span class="fa fa-camera"></span> 更改头像</li>
+        <li onclick="Ao()"><span class="fa fa-users"></span> 切换账号</li>
+    </div>
+</page>
+<script>
+    myhead={
+        Press:false,
+        limit:false,
+        head_userControl_Press:async function(e){
+            e.stopPropagation();
+            let menu = document.querySelector(".head_userControl_menu")
+            if(myhead.Press){
+                menu.style.animation="fadeOut 300ms 1";
+                await sleep(280);
+                menu.style.display="none";
+                menu.style.animation="menuAppear 500ms 1";
+                document.removeEventListener("click",myhead.head_userControl_Press);
+            }else{
+                menu.style.display="block";
+                await sleep(10);
+                document.addEventListener("click",myhead.head_userControl_Press);
+            }
+            myhead.Press=!myhead.Press;
+        },
+        menuClick:function(e){
+            e.stopPropagation();
+        },
+        loginOut:function(){
+            document.cookie="sessionId=";
+            location.reload();
+        }
+    }
+    async function getUserInfo(){
+        let result = await request.sync_post("user_info",{});
+        //console.log(result);
+        if(result.code){
+            return
+        }
+        vueData.schoolid = result.data.schoolid;
+        vueData.username = result.data.username;
+        vueData.schoolname = result.data.schoolname;
+        vueData.isAdmin = result.data.isAdmin;
+        vueData.$forceUpdate();
+    }
+    vueData_load({
+            name:'myhead',
+            data:{
+                controlPage:1,
+                username:"加载中",
+                schoolname:"加载中",
+                schoolid:0,
+                newMsg:{
+                    examine:0,
+                    logs:0
+                }
+            }
+        },getUserInfo);
+</script>
+<style>
+myhead{
+    height: 100%;
+    width: 100%;
+    padding: 0 4rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0.2rem 0px 0.4rem rgb(0, 0, 0,0.3);
+}
+.redDrop::after{
+    content: "●";
+    color: rgb(255, 76, 76);
+    position: absolute;
+    top: 0.3rem;
+}
+.head_logo{
+    width: 11rem;
+    flex: 0 0 auto;
+}
+.controlPage{
+    margin: 0 4rem;
+    white-space: nowrap;
+    flex: 1 0 auto;
+    height: 100%;
+}
+.controlPage button{
+    color: var(--primary-text);
+    font-size: 1.25rem;
+    margin: 0 1rem;
+    width: 6rem;
+    height: 100%;
+    white-space: nowrap;
+    background-color: rgba(0, 0, 0, 0);
+    outline: 0;
+    border: 0;
+    cursor: pointer;
+    border-bottom: 0.2rem solid rgb(0, 0, 0, 0);
+    transition: all 300ms;
+}
+.controlPageBtnAct{
+    border-bottom: 0.2rem solid var(--primary-color) !important;
+}
+.head_userInfo{
+    margin-left: auto;
+    flex: 0 0 auto;
+    margin-right: 5rem;
+    font-size: 1.5rem;
+}
+.head_userInfo span{
+    margin: 0.5rem;
+}
+.head_userControl{
+    margin-left: 0;
+    flex: 0 0 auto;
+    font-size: 2.5rem;
+    transition: transform 300ms;
+    cursor: pointer;
+}
+.head_userControl:hover{
+    transform: scale(1.1);
+}
+.head_userControl:active{
+    transition: transform 10ms;
+    transform: scale(0.8);
+}
+.head_userControl_menu{
+    user-select: none;
+    text-align: center;
+    position: fixed;
+    display: block;
+    top: 4rem;
+    right: 1.75rem;
+    width: 7rem;
+    height: fit-content;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    border-radius: 0.3rem;
+    list-style: none;
+    display: none;
+    animation: menuAppear 500ms 1;
+}
+@keyframes menuAppear{
+    from{
+        transform: scale(0.4) translateY(-6rem);
+        opacity: 0.2;
+    }
+    to{
+        transform: scale(1) translateY(0rem);
+        opacity: 1;
+    }
+}
+@keyframes fadeOut{
+    from{
+        opacity: 1;
+        transform: scale(1);
+    }
+    to{
+        opacity: 0;
+        transform: scale(0.7);
+    }
+}
+.head_userControl_menu li{
+    margin: 0.8rem;
+    cursor: pointer;
+}
+</style>

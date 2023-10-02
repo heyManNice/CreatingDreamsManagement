@@ -1,0 +1,51 @@
+<page>
+    <div>
+        <span>默认消息</span>
+    </div>
+</page>
+<script>
+    warn={
+        show:function(data){
+            let em = document.querySelector("warn");
+            clearTimeout(warn.timer)
+            if(warn.isShow){
+                em.style.top="-10vh";
+                setTimeout(function(){
+                    warn.isShow=false;
+                    warn.show({msg:data.msg,ms:data.ms})
+                },150)
+                return
+            }
+            em.children[0].children[0].innerHTML=data.msg
+            em.style.top="4vh";
+            warn.isShow=true;
+            warn.timer = setTimeout(function(){
+                em.style.top="-10vh"
+                warn.isShow=false;
+            },data.ms)
+        },
+        isShow:false,
+        timer:setTimeout(0)
+    }
+    loadUrlParam()
+</script>
+<style>
+    warn{
+        white-space: nowrap;
+        top: -10vh;
+        left: 0;
+        right: 0;
+        margin: auto;
+        position: absolute;
+        width: fit-content;
+        height: fit-content;
+        background-color: var(--primary-color);
+        color: var(--text-icons);
+        text-align: center;
+        padding: 1vh;
+        border-radius: 0.5vh;
+        z-index: 999;
+        transition: top 300ms;
+        box-shadow: 0px 0px 1vh var(--primary-text);
+    }
+</style> 

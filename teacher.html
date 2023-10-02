@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>校园统一管理系统</title>
+</head>
+<link rel="stylesheet" href="./css/bule.css">
+<link rel="stylesheet" href="./css/teacher.css">
+<link rel="stylesheet" href="./css/font-awesome.min.css">
+<script src="./js/request.js"></script>
+<script src="./js/adjustFontSize.js"></script>
+<script src="./js/sleep.js"></script>
+<script src="./js/vue.js"></script>
+<script src="./js/unitBase.js"></script>
+<style>
+    .singleControl .card{
+        margin-bottom: 1rem;
+        width: 100%;
+        height: fit-content;
+        background-color: rgb(255, 255, 255);
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0px 0px 0.4rem rgb(0, 0, 0,0.3);
+    }
+    .singleControl .card p{
+        margin-top: 1rem;
+    }
+    .singleControl{
+        padding: 1rem;
+    }
+</style>
+<body>
+    <div id="app">
+        <div class="head">
+            <myhead></myhead>
+        </div>
+        <div class="main">
+            <div class="unifiedControl">
+            </div>
+            <div class="singleControl">
+                <div class="card">
+                    <h1>┗|｀O′|┛ 嗷~~</h1>
+                    <p>你的审核还没通过，正在等待管理员审核</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    units=['myhead'];
+</script>
+</html>

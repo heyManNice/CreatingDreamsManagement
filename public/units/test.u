@@ -1,0 +1,26 @@
+<page>
+    <p>测试组件</p>
+    <h1>{{message}}</h1>
+    <ul>
+        <li class="item" v-for="i in list">{{i}}</li>
+    </ul>
+</page>
+<script>
+    mount({
+        name:'test',
+        data:{
+            list:[1,2,3],
+            message:'哈哈哈'
+        }
+    })
+</script>
+<style>
+    .item{
+        display: block;
+        width: 100px;
+        height: 30px;
+        border: 2px solid black;
+        border-radius: 10px;
+        margin: 5px;
+    }
+</style> 
